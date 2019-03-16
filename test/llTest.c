@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
     int ELEMENT_SIZE = 128;
     
     //Initialize
-    LinkedList_t* ll = constructLinkedList(SIZE);
+    LinkedList_t* ll = constructLinkedList();
     void** arr = (void**)malloc(SIZE * sizeof(void*));
     
     //Test Insert
