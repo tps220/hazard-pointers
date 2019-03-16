@@ -28,7 +28,7 @@ typedef struct LinkedList {
     int size;
 } LinkedList_t;
 
-LinkedList_t* constructLinkedList(int size) {
+LinkedList_t* constructLinkedList() {
     LinkedList_t* ll = (LinkedList_t*)malloc(sizeof(LinkedList_t));
     ll -> head = ll -> tail = NULL;
     ll -> size = 0;

@@ -22,5 +22,6 @@ extern HazardContainer_t* memoryLedger;
 
 void retireElement(HazardNode_t* hazardNode, void* ptr);
 void scan(HazardNode_t* hazardNode);
+void reclaimMemory(void* ptr);
 
 #endif

@@ -31,14 +31,17 @@ void scan(HazardNode_t* hazardNode) {
     popAll(hazardNode -> retiredList, tmpList);
     for (int i = 0; i < listSize; i++) {
         if (findElement(ptrList, tmpList[i])) {
-            push(hazardNode -> retiredList);
+            push(hazardNode -> retiredList, tmpList[i]);
         }
         else {
-            free(tmpList[i]);
+            reclaimMemory(tmpList[i]);
         }
     }
     free(tmpList);
 }
 
+void reclaimMemory(void* ptr) {
+    free(ptr);
+}
 
 #endif
