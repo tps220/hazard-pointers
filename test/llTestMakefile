@@ -1,0 +1,4 @@
+all: llTest
+
+llTest: llTest.c
+	gcc -o llTest llTest.c -I ../src/
