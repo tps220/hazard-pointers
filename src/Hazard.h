@@ -18,7 +18,9 @@ typedef struct HazardContainer {
     int H;
 } HazardContainer_t;
 
+extern HazardContainer_t* memoryLedger;
+
 void retireElement(HazardNode_t* hazardNode, void* ptr);
-void scan(HazardContainer_t* container, HazardNode_t* hazardNode);
+void scan(HazardNode_t* hazardNode);
 
 #endif

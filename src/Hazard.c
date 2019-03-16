@@ -2,10 +2,19 @@
 
 #ifndef HAZARD_C
 #define HAZARD_C
+#include "Hazard.h"
 
-void scan(HazardContainer_t* container, HazardNode_t* hazardNode) {
+void retireElement(HazardNode_t* hazardNode, void* ptr) {
+    push(hazardNode -> retiredList, ptr);
+    if (hazardNode -> retiredList -> size == MAX_DEPTH) {
+        scan(hazardNode);
+    }
+}
+
+void scan(HazardNode_t* hazardNode) {
+    //Collect all valid hazard pointers across application threads
     LinkedList_t* ptrList = constructLinkedList();
-    HazardNode_t* runner = container -> head;
+    HazardNode_t* runner = memoryLedger -> head;
     while (runner != NULL) {
         if (runner -> hp0 != NULL) {
             push(ptrList, runner -> hp0);
@@ -15,9 +24,12 @@ void scan(HazardContainer_t* container, HazardNode_t* hazardNode) {
         }
         runner = runner -> next;
     }
-    void** tmpList = (void**)malloc((hazardNode -> retiredList -> size + 1) * sizeof(void*));
-    int length = popAll(hazardNode -> retiredList, tmpList);
-    for (int i = 0; i < length; i++) {
+    
+    //Compare retired candidates against active hazard nodes, reclaiming or procastinating
+    int listSize = hazardNode -> retiredList -> size;
+    void** tmpList = (void**)malloc(listSize * sizeof(void*));
+    popAll(hazardNode -> retiredList, tmpList);
+    for (int i = 0; i < listSize; i++) {
         if (findElement(ptrList, tmpList[i])) {
             push(hazardNode -> retiredList);
         }
