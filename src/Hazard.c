@@ -4,14 +4,28 @@
 #define HAZARD_C
 #include "Hazard.h"
 
-void retireElement(HazardNode_t* hazardNode, void* ptr) {
-    push(hazardNode -> retiredList, ptr);
-    if (hazardNode -> retiredList -> size == MAX_DEPTH) {
-        scan(hazardNode);
+HazardNode_t* constructHazardNode() {
+    HazardNode_t* node = (HazardNode_t*)malloc(sizeof(HazardNode_t));
+    node -> hp0 = node -> hp1 = NULL;
+    node -> next = NULL;
+    return node;
+}
+
+HazardContainer_t* constructHazardContainer(HazardNode_t* head, int H) {
+    HazardContainer_t* container = (HazardContainer_t*)malloc(sizeof(HazardContainer_t));
+    container -> head = head;
+    container -> H = H;
+    return container;
+}
+
+void retireElement(LinkedList_t* retiredList, void* ptr) {
+    push(retiredList, ptr);
+    if (retiredList -> size >= MAX_DEPTH) {
+        scan(retiredList);
     }
 }
 
-void scan(HazardNode_t* hazardNode) {
+void scan(LinkedList_t* retiredList) {
     //Collect all valid hazard pointers across application threads
     LinkedList_t* ptrList = constructLinkedList();
     HazardNode_t* runner = memoryLedger -> head;
@@ -26,12 +40,12 @@ void scan(HazardNode_t* hazardNode) {
     }
     
     //Compare retired candidates against active hazard nodes, reclaiming or procastinating
-    int listSize = hazardNode -> retiredList -> size;
+    int listSize = retiredList -> size;
     void** tmpList = (void**)malloc(listSize * sizeof(void*));
-    popAll(hazardNode -> retiredList, tmpList);
+    popAll(retiredList, tmpList);
     for (int i = 0; i < listSize; i++) {
         if (findElement(ptrList, tmpList[i])) {
-            push(hazardNode -> retiredList, tmpList[i]);
+            push(retiredList, tmpList[i]);
         }
         else {
             reclaimMemory(tmpList[i]);

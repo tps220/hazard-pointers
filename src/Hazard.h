@@ -4,24 +4,27 @@
 #define HAZARD_H
 
 #include "LinkedList.h"
-#define MAX_DEPTH 20
+#define MAX_DEPTH 5
 
 typedef struct HazardNode {
     void* hp0;
     void* hp1;
-    LinkedList_t* retiredList;
     struct HazardNode* next;
 } HazardNode_t;
+
+HazardNode_t* constructHazardNode();
 
 typedef struct HazardContainer {
     HazardNode_t* head;
     int H;
 } HazardContainer_t;
 
+HazardContainer_t* constructHazardContainer();
+
 extern HazardContainer_t* memoryLedger;
 
-void retireElement(HazardNode_t* hazardNode, void* ptr);
-void scan(HazardNode_t* hazardNode);
+void retireElement(LinkedList_t* retiredList, void* ptr);
+void scan(LinkedList_t* retiredList);
 void reclaimMemory(void* ptr);
 
 #endif
